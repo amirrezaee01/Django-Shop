@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Hero -->
+<div class="position-relative content-space-t-2 content-space-t-lg-3">
+    <!-- Swiper Main Slider -->
+    <div class="js-swiper-shop-classic-hero swiper bg-light">
+        <div class="swiper-wrapper">
+            <!-- Slide -->
+            <div class="swiper-slide">
+                <!-- Container -->
+                <div class="container content-space-t-2 content-space-b-3">
+                    <div class="row align-items-lg-center">
+                        <div class="col-lg-5 order-lg-2 mb-7 mb-lg-0">
+                            <div class="mb-6">
+                                <h1 class="display-4 mb-4">درپوش طرح اصلی جلو</h1>
+                                <p>فرانت علاوه بر اینکه در نوآوری‌های فنی بازی را تغییر می‌دهد، برخی از پرفروش‌ترین
+                                    کلاه‌ها را در
+                                    قفسه خود دارد.</p>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <a class="btn btn-primary rounded-pill" href="#">نمایش جزئیات محصول</a>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 order-lg-1">
+                            <div class="w-75 mx-auto">
+                                <img class="img-fluid" src="{% static 'img/mockups/img5.png' %}"
+                                    alt="Image Description">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Repeat for other slides -->
+            <div class="swiper-slide">
+                <div class="container content-space-t-2 content-space-b-3">
+                    <div class="row align-items-lg-center">
+                        <div class="col-lg-5 order-lg-2 mb-7 mb-lg-0">
+                            <div class="mb-6">
+                                <h2 class="display-4 mb-4">اپل آیپد پرو</h2>
+                                <p>این همه جدید، تمام صفحه نمایش، و همه قدرتمند است...</p>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <a class="btn btn-primary rounded-pill" href="#">نمایش جزئیات محصول</a>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 order-lg-1">
+                            <div class="w-75 mx-auto">
+                                <img class="img-fluid" src="{% static 'img/mockups/img6.png' %}"
+                                    alt="Image Description">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="swiper-slide">
+                <div class="container content-space-t-2 content-space-b-3">
+                    <div class="row align-items-lg-center">
+                        <div class="col-lg-5 order-lg-2 mb-7 mb-lg-0">
+                            <div class="mb-6">
+                                <h3 class="display-4 mb-4">هودی سلیو</h3>
+                                <p>لیبل فرانسوی Celio...</p>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <a class="btn btn-primary rounded-pill" href="#">نمایش جزئیات محصول</a>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 order-lg-1">
+                            <div class="w-75 mx-auto">
+                                <img class="img-fluid" src="{% static 'img/mockups/img1.png' %}"
+                                    alt="Image Description">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Arrows -->
+        <div class="js-swiper-shop-classic-hero-button-prev swiper-button-prev"></div>
+        <div class="js-swiper-shop-classic-hero-button-next swiper-button-next"></div>
+    </div>
+
+    <!-- Swiper Thumbs Slider -->
+    <div class="position-absolute bottom-0 start-0 end-0 mb-3">
+        <div class="js-swiper-shop-hero-thumbs swiper" style="max-width: 13rem;">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide">
+                    <a class="js-swiper-thumb-progress swiper-thumb-progress-avatar" href="javascript:;" tabindex="0">
+                        <img class="swiper-thumb-progress-avatar-img" src="{% static 'img/160x160/img11.jpg' %}"
+                            alt="Image Description">
+                    </a>
+                </div>
+                <div class="swiper-slide">
+                    <a class="js-swiper-thumb-progress swiper-thumb-progress-avatar" href="javascript:;" tabindex="0">
+                        <img class="swiper-thumb-progress-avatar-img" src="{% static 'img/160x160/img14.jpg' %}"
+                            alt="Image Description">
+                    </a>
+                </div>
+                <div class="swiper-slide">
+                    <a class="js-swiper-thumb-progress swiper-thumb-progress-avatar" href="javascript:;" tabindex="0">
+                        <img class="swiper-thumb-progress-avatar-img" src="{% static 'img/160x160/img15.jpg' %}"
+                            alt="Image Description">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Icon Blocks -->
+<div class="border-bottom">
+    <div class="container content-space-2">
+        <div class="row">
+            <div class="col-md-4 mb-7 mb-md-0">
+                <div class="d-flex">
+                    <div class="flex-shrink-0">
+                        <img class="ps-2 avatar avatar-4x3" src="{% static 'svg/illustrations/oc-protected-card.svg' %}"
+                            alt="Image Description">
+                    </div>
+                    <div class="flex-grow-1 ms-4">
+                        <h4 class="mb-1">تسویه حساب ایمن</h4>
+                        <p class="small mb-0">تسویه حساب مطمئن تضمینی</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Repeat for other icons... -->
+            <div class="col-md-4 mb-7 mb-md-0">
+                <div class="d-flex">
+                    <div class="flex-shrink-0">
+                        <img class="ps-2 avatar avatar-4x3" src="{% static 'svg/illustrations/oc-return.svg' %}"
+                            alt="Image Description">
+                    </div>
+                    <div class="flex-grow-1 ms-4">
+                        <h4 class="mb-1">30 روز بازگشت</h4>
+                        <p class="small mb-0">پیشنهاد ما به شما بازپرداخت کامل...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="d-flex">
+                    <div class="flex-shrink-0">
+                        <img class="ps-2 avatar avatar-4x3" src="{% static 'svg/illustrations/oc-truck.svg' %}"
+                            alt="Image Description">
+                    </div>
+                    <div class="flex-grow-1 ms-4">
+                        <h4 class="mb-1">ارسال رایگان</h4>
+                        <p class="small mb-0">حمل و نقل استاندارد رایگان...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Subscription Section -->
+<div class="bg-light">
+    <div class="container content-space-2">
+        <div class="w-md-75 w-lg-50 text-center mx-md-auto">
+            <div class="row justify-content-lg-between">
+                <div class="mb-5">
+                    <span class="text-cap">ثبت نام</span>
+                    <h2>اخبار جدید را دریافت کنید</h2>
+                </div>
+
+                <form method="post" action="#">
+                    {% csrf_token %}
+                    <input type="hidden" name="first_name" value="">
+                    <label for="subscribe-email" class="form-label visually-hidden">ایمیل را وارد کنید</label>
+                    <div class="input-card input-card-pill input-card-sm border mb-3">
+                        <div class="input-card-form">
+                            <input id="subscribe-email" type="email" class="form-control form-control-lg" name="email"
+                                placeholder="ایمیل خود را وارد نمایید" aria-label="ایمیل خود را وارد کنید">
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg rounded-pill">ثبت نام</button>
+                    </div>
+                </form>
+
+                <p class="small">می توانید در هر زمانی اشتراک خود را لغو کنید <a href="#">سیاست حفظ حریم خصوصی</a> ما را
+                    بخوانید</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Brands -->
+<div class="container content-space-2">
+    <div class="row">
+        <div class="col text-center py-3">
+            <img class="avatar avatar-lg avatar-4x3" src="{% static 'svg/brands/hollister-dark.svg' %}" alt="Logo">
+        </div>
+        <div class="col text-center py-3">
+            <img class="avatar avatar-lg avatar-4x3" src="{% static 'svg/brands/levis-dark.svg' %}" alt="Logo">
+        </div>
+        <div class="col text-center py-3">
+            <img class="avatar avatar-lg avatar-4x3" src="{% static 'svg/brands/new-balance-dark.svg' %}" alt="Logo">
+        </div>
+        <div class="col text-center py-3">
+            <img class="avatar avatar-lg avatar-4x3" src="{% static 'svg/brands/puma-dark.svg' %}" alt="Logo">
+        </div>
+        <div class="col text-center py-3">
+            <img class="avatar avatar-lg avatar-4x3" src="{% static 'svg/brands/nike-dark.svg' %}" alt="Logo">
+        </div>
+        <div class="col text-center py-3">
+            <img class="avatar avatar-lg avatar-4x3" src="{% static 'svg/brands/tnf-dark.svg' %}" alt="Logo">
+        </div>
+    </div>
+</div>
+{% endblock content %}
