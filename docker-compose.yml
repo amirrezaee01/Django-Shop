@@ -11,6 +11,8 @@ services:
     restart: always
     expose:
       - 5432
+    ports:
+      - 5432:5432
 
   backend:
     container_name: backend
@@ -26,6 +28,8 @@ services:
 
     environment:
       - DEBUG=True
+    env_file:
+      - ./envs/dev/Django/.env
     restart: always
     depends_on:
       - db
