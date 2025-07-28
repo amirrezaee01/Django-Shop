@@ -68,7 +68,7 @@
 
                         <li class="nav-item">
                             <a class="nav-link {% if request.resolver_match.view_name  == 'shop:product-grid' %} active {% endif %}"
-                                href="#">لیست محصولات</a>
+                                href="{% url 'shop:product-grid' %}">لیست محصولات</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link {% if request.resolver_match.view_name  == 'website:about' %} active {% endif %}"
