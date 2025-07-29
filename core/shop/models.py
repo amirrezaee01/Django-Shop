@@ -22,10 +22,11 @@ class ProductModel(models.Model):
     user = models.ForeignKey("accounts.User", on_delete=models.PROTECT)
     category = models.ManyToManyField(ProductCategoryModel)
     title = models.CharField(max_length=255)
-    slug = models.SlugField(max_length=255, unique=True)
+    slug = models.SlugField(max_length=255, unique=True, allow_unicode=True)
     image = models.ImageField(
         default='/default/product-image.png', upload_to="product/img/")
     description = models.TextField()
+    brief_description = models.TextField(blank=True, null=True)
     stock = models.IntegerField(default=0)
     price = models.DecimalField(default=0, max_digits=10, decimal_places=0)
     discount_percent = models.IntegerField(default=0)

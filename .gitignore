@@ -182,3 +182,5 @@ cython_debug/
 
 #ignore database file
 postgres/data/*
+
+media/product/*
