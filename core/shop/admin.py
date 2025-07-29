@@ -7,6 +7,7 @@ from .models import ProductModel, ProductCategoryModel, ProductImageModel
 class ProductModelAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'title', 'price', 'discount_percent',
                     'stock', 'status', 'created_date')
+    search_fields = ('title', 'slug')
 
 
 @admin.register(ProductCategoryModel)

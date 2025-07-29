@@ -18,3 +18,9 @@ class ShopProductGridView(ListView):
         context = super().get_context_data(**kwargs)
         context['total_items'] = self.queryset.count()
         return context
+
+
+class ShopProductDetailView(DetailView):
+    template_name = 'shop/product_detail.html'
+    queryset = ProductModel.objects.filter(
+        status=ProductStatusType.publish.value)
