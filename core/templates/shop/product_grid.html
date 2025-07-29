@@ -202,8 +202,7 @@
                             </div>
 
                             <h4 class="card-title">
-                                <a class="text-dark"
-                                    href="{% url 'shop:product-detail' slug=object.slug %}">{{object.title}}</a>
+                                <a class="text-dark" href="#">{{object.title}}</a>
                             </h4>
                             {% if object.is_discounted %}
                             <p class="card-text text-dark fs-4">
@@ -336,7 +335,10 @@
 <div class="container content-space-2">
     <div class="row">
         <div class="col text-center py-3">
-            <img class="avatar avatar-lg avatar-4x3" src="{% static '/svg/brands/hollister-dark.svg' %}" alt="Logo">
+            <img src="{% static '/svg/brands/hollister-dark.svg' %}" alt="Logo">
+
+
+
         </div>
         <!-- End Col -->
 
