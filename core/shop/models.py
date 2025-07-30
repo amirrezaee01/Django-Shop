@@ -9,7 +9,7 @@ class ProductStatusType(models.IntegerChoices):
 
 class ProductCategoryModel(models.Model):
     title = models.CharField(max_length=255)
-    slug = models.SlugField(max_length=255, unique=True)
+    slug = models.SlugField(max_length=255, unique=True, allow_unicode=True)
 
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
