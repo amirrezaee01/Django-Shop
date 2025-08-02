@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load shop_tags %}
 
 
 {% block content %}
@@ -273,7 +274,7 @@
     <!-- End Row -->
 </div>
 <!-- End Content -->
-
+{% show_similar_products object %}
 
 
 <!-- Review Section -->
@@ -426,6 +427,7 @@
             </div>
         </div>
         <!-- End Col -->
+
 
         <div class="col-md-8">
             <div class="ps-md-4">
