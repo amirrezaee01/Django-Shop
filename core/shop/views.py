@@ -46,3 +46,7 @@ class ShopProductDetailView(DetailView):
     template_name = 'shop/product_detail.html'
     queryset = ProductModel.objects.filter(
         status=ProductStatusType.publish.value)
+    context_object_name = 'product'
+    
+    
+   
