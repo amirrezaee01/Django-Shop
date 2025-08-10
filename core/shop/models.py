@@ -43,16 +43,19 @@ class ProductModel(models.Model):
     def __str__(self):
         return self.title
 
-    @property
     def is_discounted(self):
         return self.discount_percent > 0
 
-    @property
     def get_price(self):
-        if self.is_discounted:
+        if self.is_discounted():
             discount = self.price * self.discount_percent / 100
             return round(self.price - discount)
         return round(self.price)
+
+    def get_show_price(self):
+        if self.is_discounted():
+            return f"{self.get_price()} تومان <span class='text-muted text-decoration-line-through'>{self.price} تومان</span>"
+        return f"{self.get_price()} تومان"
 
 
 class ProductImageModel(models.Model):

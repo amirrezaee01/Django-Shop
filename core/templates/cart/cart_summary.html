@@ -18,100 +18,102 @@
 
             <!-- List Group -->
             <ul class="list-group list-group-flush list-group-no-gutters mb-5">
-                {% for item in cart.get_cart_dict.items %}
+                {% for item in cart_items %}
                 <!-- Item -->
                 <li class="list-group-item">
                     <div class="d-flex">
                         <div class="flex-shrink-0">
-                            <img class="avatar avatar-xl avatar-4x3" src="{{ item.product_obj.image.url }}"
+                            <img class="avatar avatar-xl avatar-4x3" src="{{item.product_obj.image.url}}"
                                 alt="Image Description">
                         </div>
+
                         <div class="flex-grow-1 ms-3">
-                            <!-- Your item details here (same as before) -->
                             <div class="row">
                                 <div class="col-sm-6 mb-3 mb-sm-0">
-                                    <h5>
-                                        <a class="text-dark"
-                                            href="{% url 'shop:product-detail' slug=item.product_obj.slug %}">
-                                            {{ item.product_obj.title }}
-                                        </a>
+                                    <h5><a class="text-dark"
+                                            href="{% url 'shop:product-detail' slug=item.product_obj.slug %}">{{item.product_obj.title}}</a>
                                     </h5>
+
                                     <div class="d-block d-sm-none">
-                                        <h5 class="mb-1 formatted-price">{{ item.total_price }}</h5>
-                                    </div>
-                                    <div class="d-grid gap-1">
-                                        <div class="text-body">
-                                            <span class="small">دسته بندی:</span>
-                                            <span class="fw-semibold small">
-                                                {% for category in item.product_obj.category.all %}
-                                                <a href="#">{{ category.title }}</a>
-                                                {% if not forloop.last %}
-                                                ,
-                                                {% endif %}
-                                                {% endfor %}
-                                            </span>
-                                        </div>
+                                        <h5 class="mb-1 formatted-price">{{item.total_price}}</h5>
                                     </div>
 
                                     <div class="d-grid gap-1">
                                         <div class="text-body">
+                                            <span class="small">دسته بندی:</span>
+                                            <span class="fw-semibold small">{% for category in item.product_obj.category.all %} 
+                                                <a href="#">{{category.title}} </a>
+                                                {% if not forloop.last %} ,{% endif %}
+                                                {% endfor %}</span>
+                                        </div>
+                                    </div>
+                                    <div class="d-grid gap-1">
+                                        <div class="text-body">
                                             <span class="small">قیمت هر واحد:</span>
-                                            <span class="fw-semibold formatted-price small">
-                                                {{item.product_obj.get_price }}</span>
+                                            <span
+                                                class="fw-semibold formatted-price small">{{item.product_obj.get_price}}</span>
                                         </div>
                                     </div>
                                 </div>
                                 <!-- End Col -->
+
                                 <div class="col-sm-4">
                                     <div class="row">
                                         <div class="col-auto">
                                             <div class="d-flex align-items-center">
                                                 <span class="h6 ms-3">تعداد:</span>
+                                                <!-- Select -->
                                                 <select class="form-select form-select-sm mb-3"
-                                                    onchange="changeProductQuantity('{{ item.product_id }}', this.value)">
+                                                    onchange="changeProductQuantity('{{item.product_id}}',this.value)">
                                                     {% with ''|center:item.product_obj.stock as range %}
                                                     {% for _ in range %}
-                                                    {% if forloop.counter == item.quantity %}
-                                                    <option value="{{ forloop.counter }}" selected>{{ forloop.counter }}
-                                                    </option>
-                                                    {% else %}
-                                                    <option value="{{ forloop.counter }}">{{ forloop.counter }}</option>
-                                                    {% endif %}
+                                                    <option value="{{ forloop.counter }}" 
+                                                    {% if forloop.counter == item.quantity %} selected {% endif %}>
+                                                        {{ forloop.counter }}</option>
                                                     {% endfor %}
                                                     {% endwith %}
+
+
                                                 </select>
                                             </div>
+                                            <!-- End Select -->
                                         </div>
-                                        <div class="col-auto">
+
+                                        <div class="col-auto ">
                                             <div class="d-grid gap-2 d-flex justify-content-between">
-                                                <button class="btn btn-sm btn-icon text-danger border-0 mx-1"
-                                                    onclick="removeProduct('{{ item.product_id }}')">
+                                                <button class=" btn btn-sm btn-icon text-danger border-0 mx-1" onclick="removeProduct('{{item.product_id}}')">
                                                     <i class="bi-trash ms-1"></i> حذف
                                                 </button>
                                                 {% if request.user.is_authenticated %}
-                                                <button class="btn btn-sm btn-icon text-secondary border-0 mx-1">
-                                                    <i class="bi-heart-fill ms-1"></i> علایق
+                                                <button class=" btn btn-sm btn-icon text-secondary border-0 mx-1" >
+                                                    <i class="bi-heart-fill ms-1 "></i> علایق
                                                 </button>
                                                 {% endif %}
                                             </div>
                                         </div>
+                                        <!-- End Col -->
                                     </div>
+                                    <!-- End Row -->
                                 </div>
+                                <!-- End Col -->
+
                                 <div class="col-4 col-sm-2 d-none d-sm-inline-block text-right">
-                                    <span class="h5 d-block mb-1 formatted-price">{{ item.total_price }}</span>
+                                    <span class="h5 d-block mb-1 formatted-price">{{item.total_price}}</span>
                                 </div>
+                                <!-- End Col -->
                             </div>
+                            <!-- End Row -->
                         </div>
                     </div>
                 </li>
                 {% empty %}
-                <li class="list-group-item text-center">
-                    محصولی برای نمایش وجود ندارد
-                </li>
+                <div class="row text-center">
+                    <p> محصولی برای نمایش وجود ندارد</p>
+                </div>
+                <!-- End Item -->
                 {% endfor %}
+
             </ul>
-
-
             <!-- End List Group -->
 
             <div class="d-sm-flex justify-content-end">
@@ -191,15 +193,15 @@
 
 {% block extra_js %}
 <script>
-    function changeProductQuantity(product_id, quantity) {
+    function changeProductQuantity(product_id,quantity){
         $.ajax({
-            url: "#",
+            url: "{% url 'cart:session-update-product-quantity' %}",
             method: 'POST',
             data: {
                 product_id: product_id,
                 quantity: quantity,
                 csrfmiddlewaretoken: '{{ csrf_token }}'
-
+    
             },
             success: function (response) {
                 console.log(response);
@@ -212,14 +214,14 @@
             }
         });
     }
-    function removeProduct(product_id) {
+    function removeProduct(product_id){
         $.ajax({
-            url: "#",
+            url: "{% url 'cart:session-remove-product' %}",
             method: 'POST',
             data: {
                 product_id: product_id,
                 csrfmiddlewaretoken: '{{ csrf_token }}'
-
+    
             },
             success: function (response) {
                 console.log(response);
