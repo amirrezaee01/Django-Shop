@@ -7,6 +7,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+
+
     <!-- Title -->
     <title>{% block title %} {% endblock title %}</title>
 
@@ -133,6 +135,7 @@
 
     <!-- ========== MAIN CONTENT ========== -->
     <main id="content" role="main">{% block content %}{% endblock content %}</main>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <!-- ========== FOOTER ========== -->
     <footer class="border-top">
@@ -593,9 +596,9 @@
     <script>
         function addToCart(product_id) {
 
-            //console.log(product_id)
+            console.log(product_id)
             $.ajax({
-                url: "#",
+                url: "{%  url 'cart:session-add-product' %}",
                 method: 'POST',
                 data: {
                     product_id: product_id,
@@ -645,6 +648,7 @@
         }
 
     </script>
+
 
     {% block extra_js %} {% endblock extra_js %}
 
