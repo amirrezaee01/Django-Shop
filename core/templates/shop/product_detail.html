@@ -133,9 +133,9 @@
                 <div class="js-quantity-counter row align-items-center">
                     <div class="col">
                         <span class="d-block small">تعداد را انتخاب کنید</span>
-                        <input class="js-result form-control form-control-quantity-counter" type="text" value="1">
+                        <input id="quantity-input" class="js-result form-control form-control-quantity-counter"
+                            type="number" min="0" max="{{ product.stock }}" value="0">
                     </div>
-                    <!-- End Col -->
 
                     <div class="col-auto">
                         <a class="js-minus btn btn-outline-secondary btn-xs btn-icon rounded-circle"
@@ -154,10 +154,11 @@
                             </svg>
                         </a>
                     </div>
-                    <!-- End Col -->
                 </div>
-                <!-- End Row -->
             </div>
+
+
+
             <!-- End Quantity -->
 
             <!-- Accordion -->
@@ -235,7 +236,8 @@
             <!-- End Accordion -->
 
             <div class="d-grid mb-4">
-                <button type="button" class="btn btn-primary btntransition">افزودن به سبد خرید</button>
+                <button type="button" class="btn btn-primary btntransition"
+                    onclick="addToCart('{{ object.id }}')">افزودن به سبد خرید</button>
             </div>
 
             <!-- Media -->
