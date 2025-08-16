@@ -585,24 +585,54 @@
   <!-- JS Cart-->
   <script>
     function addToCart(product_id) {
+      // read selected quantity (detail page); fallback to 1 (grid page)
+      const qtyInput = document.getElementById('quantity-input');
+      const quantity = qtyInput ? (parseInt(qtyInput.value, 10) || 1) : 1;
 
-      console.log(product_id)
       $.ajax({
-        url: "{%  url 'cart:session-add-product' %}",
+        url: "{% url 'cart:session-add-product' %}",
         method: 'POST',
         data: {
           product_id: product_id,
+          quantity: quantity,
           csrfmiddlewaretoken: '{{ csrf_token }}'
-
         },
         success: function (response) {
-          $("#total-cart-item-count").html(response.total_quantity)
-          console.log(response);
-          // do something with the response data
+          // update navbar counter
+          if (typeof response.total_quantity !== "undefined") {
+            $("#total-cart-item-count").html(response.total_quantity);
+          }
+
+          // show success/error message (using 'message' from backend)
+          if (response.success) {
+            $("#cart-message")
+              .removeClass("alert-danger")
+              .addClass("alert alert-success mt-2")
+              .html("✅ " + (response.message || "محصول با موفقیت اضافه شد"))
+              .fadeIn()
+              .delay(2000)
+              .fadeOut();
+          } else {
+            $("#cart-message")
+              .removeClass("alert-success")
+              .addClass("alert alert-danger mt-2")
+              .html("❌ " + (response.message || "امکان افزودن وجود ندارد"))
+              .fadeIn()
+              .delay(3000)
+              .fadeOut();
+          }
+
+          // optional: if you want to reset the input back to 1 on success
+          // if (response.success && qtyInput) qtyInput.value = 1;
         },
-        error: function (jqXHR, textStatus, errorThrown) {
-          console.log(errorThrown);
-          // handle the error case
+        error: function () {
+          $("#cart-message")
+            .removeClass("alert-success")
+            .addClass("alert alert-danger mt-2")
+            .html("❌ خطایی رخ داده است. لطفاً دوباره تلاش کنید.")
+            .fadeIn()
+            .delay(3000)
+            .fadeOut();
         }
       });
     }

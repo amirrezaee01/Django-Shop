@@ -8,13 +8,24 @@ class SessionAddProductView(View):
     def post(self, request, *args, **kwargs):
         cart = CartSession(request.session)
         product_id = request.POST.get('product_id')
+        # keep as str; cart will int() it
+        quantity = request.POST.get('quantity', '1')
+
         success = False
+        info = {"code": "invalid", "message": "درخواست نامعتبر است",
+                "current_quantity": 0, "stock": 0}
+
         if product_id:
-            success = cart.add_product(product_id)
+            # uses your new additive method
+            success, info = cart.add_quantity(product_id, quantity)
+
         return JsonResponse({
-            'cart': cart.get_cart_dict(),
-            'total_quantity': cart.get_total_quantity(),
-            'success': success,
+            "success": success,
+            "code": info.get("code"),
+            "message": info.get("message"),
+            "current_quantity": info.get("current_quantity"),
+            "stock": info.get("stock"),
+            "total_quantity": cart.get_total_quantity(),
         })
 
 
