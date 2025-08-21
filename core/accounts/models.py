@@ -63,7 +63,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class Profile(models.Model):
     user = models.OneToOneField(
-        User, on_delete=models.CASCADE, related_name='profile')
+        'User', on_delete=models.CASCADE, related_name='user_profile')
 
     id = models.PositiveIntegerField(primary_key=True)  # Use user.id as PK
 
@@ -76,13 +76,18 @@ class Profile(models.Model):
     )
     image = models.ImageField(
         upload_to='profile_images/',
-        default='profile_images/default.jpg',
+        default='profile_images/profile/default.png',
         blank=True,
-        null=True
+
     )
 
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
+
+    def get_fullname(self):
+        if self.first_name and self.last_name:
+            return f"{self.first_name} {self.last_name}"
+        return "کاربر جدید"
 
     def save(self, *args, **kwargs):
         if not self.id and self.user:

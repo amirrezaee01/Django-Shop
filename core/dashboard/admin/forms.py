@@ -1,4 +1,6 @@
 from django.contrib.auth.forms import PasswordChangeForm
+from accounts.models import Profile
+from django import forms
 
 
 class AdminPasswordChangeForm(PasswordChangeForm):
@@ -24,4 +26,25 @@ class AdminPasswordChangeForm(PasswordChangeForm):
                 "placeholder": placeholder,
                 "class": "form-control",  # Bootstrap styling
                 "autocomplete": "off",    # optional: avoid browser autofill
+            })
+
+
+class AdminProfileEditForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['first_name', 'last_name', 'phone_number']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        field_placeholders = {
+            'first_name': 'نام',
+            'last_name': 'نام خانوادگی',
+            'phone_number': 'شماره تلفن',
+        }
+
+        for field_name, placeholder in field_placeholders.items():
+            self.fields[field_name].widget.attrs.update({
+                'placeholder': placeholder,
+                'class': 'form-control',
             })

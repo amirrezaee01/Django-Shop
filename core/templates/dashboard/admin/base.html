@@ -109,11 +109,8 @@
                             <button class="btn btn-ghost-secondary btn-icon" id="dropdownMenuLink"
                                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="avatar avatar-sm avatar-circle">
-                                    {% if request.user.is_authenticated and request.user.profile.image %}
-                                    <img class="avatar-img" src="{{ request.user.profile.image.url }}"
-                                        alt="Profile Image">
-                                    {% endif %}
-
+                                    <img class="avatar-img" src="{{request.user.user_profile.image.url}}"
+                                        alt="Image Description">
                                 </span>
                             </button>
 
