@@ -108,8 +108,11 @@
               <button class="btn btn-ghost-secondary btn-icon" id="dropdownMenuLink" data-bs-toggle="dropdown"
                 aria-haspopup="true" aria-expanded="false">
                 <span class="avatar avatar-sm avatar-circle">
-                  <img class="avatar-img" src="{%static 'img/naruto.png' %}" alt="Image Description">
-                </span>
+                  {% if request.user.is_authenticated and request.user.profile.image %}
+                  <img class="avatar-img" src="{{ request.user.profile.image.url }}" alt="Profile Image">
+                  {% endif %}
+
+
               </button>
 
               <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">

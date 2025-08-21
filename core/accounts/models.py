@@ -31,13 +31,11 @@ class UserManager(BaseUserManager):
         extra_fields.setdefault('is_active', True)
         extra_fields.setdefault('is_verified', True)
         extra_fields.setdefault('type', UserType.superuser.value)
-        
 
         if extra_fields.get('is_staff') is not True:
             raise ValueError(_('Superuser must have is_staff=True.'))
         if extra_fields.get('is_superuser') is not True:
             raise ValueError(_('Superuser must have is_superuser=True.'))
-        
 
         return self.create_user(email, password, **extra_fields)
 
@@ -66,7 +64,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 class Profile(models.Model):
     user = models.OneToOneField(
         User, on_delete=models.CASCADE, related_name='profile')
-    
+
     id = models.PositiveIntegerField(primary_key=True)  # Use user.id as PK
 
     first_name = models.CharField(max_length=30, blank=True)
@@ -75,6 +73,12 @@ class Profile(models.Model):
         max_length=15,
         validators=[validate_iranian_phone_number],
         blank=True
+    )
+    image = models.ImageField(
+        upload_to='profile_images/',
+        default='profile_images/default.jpg',
+        blank=True,
+        null=True
     )
 
     created_date = models.DateTimeField(auto_now_add=True)
@@ -85,7 +89,8 @@ class Profile(models.Model):
             self.id = self.user.id  # Set profile.id = user.id
         super().save(*args, **kwargs)
 
+
 @receiver(post_save, sender=User)
 def create_profile(sender, instance, created, **kwargs):
-    if created and instance.type == UserType.customer.value:
-        Profile.objects.create(user=instance)
+    if created and instance.type in [UserType.customer.value, UserType.admin.value]:
+        Profile.objects.create(user=instance, id=instance.id)

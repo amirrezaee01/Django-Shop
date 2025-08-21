@@ -4,7 +4,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from accounts.models import UserType
+from dashboard.permissions import HasCustomerAccessPermison, HasAdminAccessPermison
 
 
-class CustomerDashboardHomeView(LoginRequiredMixin, TemplateView):
+class CustomerDashboardHomeView(LoginRequiredMixin, HasCustomerAccessPermison, TemplateView):
     template_name = 'dashboard/customer/home.html'
