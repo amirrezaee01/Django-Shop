@@ -27,7 +27,8 @@
             <div class="col-sm-9">
                 <!-- Media -->
 
-                <form action="#" method="post" class="d-flex align-items-center" enctype="multipart/form-data">
+                <form action="{% url 'dashboard:admin:profile-image-edit' %}" method="post"
+                    class="d-flex align-items-center" enctype="multipart/form-data">
                     {% csrf_token %}
                     <!-- Avatar -->
                     <label class="avatar avatar-xl avatar-circle" for="avatarUploader">

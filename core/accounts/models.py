@@ -4,7 +4,6 @@ from django.db.models.signals import post_save
 from django.contrib.auth.base_user import BaseUserManager
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
-from django.db import models
 from django.core.validators import RegexValidator
 from .validators import validate_iranian_phone_number
 
@@ -74,11 +73,12 @@ class Profile(models.Model):
         validators=[validate_iranian_phone_number],
         blank=True
     )
+
+    # ✅ Fixed image field
     image = models.ImageField(
         upload_to='profile_images/',
-        default='profile_images/profile/default.png',
-        blank=True,
-
+        default='profile_images/profile/default.png',  # Make sure this exists
+        blank=True
     )
 
     created_date = models.DateTimeField(auto_now_add=True)
@@ -95,7 +95,8 @@ class Profile(models.Model):
         super().save(*args, **kwargs)
 
 
+# ✅ Updated signal to ensure profile always exists
 @receiver(post_save, sender=User)
 def create_profile(sender, instance, created, **kwargs):
-    if created and instance.type in [UserType.customer.value, UserType.admin.value]:
-        Profile.objects.create(user=instance, id=instance.id)
+    if created:
+        Profile.objects.get_or_create(user=instance)

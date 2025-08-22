@@ -1,20 +1,13 @@
-from django.shortcuts import render
-from django.views.generic import TemplateView, View, UpdateView
+from django.views.generic import View, TemplateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import redirect
-from django.urls import reverse_lazy
-from accounts.models import UserType
-from dashboard.permissions import HasCustomerAccessPermison, HasAdminAccessPermison
+from dashboard.permissions import HasAdminAccessPermission
 from django.contrib.auth import views as auth_views
-from django.urls import reverse_lazy
+from dashboard.admin.forms import *
 from django.contrib.messages.views import SuccessMessageMixin
-from dashboard.admin.forms import AdminPasswordChangeForm, AdminProfileEditForm
-
+from django.urls import reverse_lazy
 from accounts.models import Profile
-
-
-class AdminDashboardHomeView(LoginRequiredMixin, HasAdminAccessPermison, TemplateView):
-    template_name = 'dashboard/admin/home.html'
+from django.shortcuts import redirect
+from django.contrib import messages
 
 
 class AdminSecurityEditView(LoginRequiredMixin, SuccessMessageMixin, HasAdminAccessPermison, auth_views.PasswordChangeView):
@@ -33,3 +26,19 @@ class AdminProfileEditView(LoginRequiredMixin, HasAdminAccessPermison, SuccessMe
     def get_object(self, queryset=None):
 
         return Profile.objects.get(user=self.request.user)
+
+
+class AdminProfileImageEditView(LoginRequiredMixin, HasAdminAccessPermison, SuccessMessageMixin, UpdateView):
+    http_method_names = ['post']
+    model = Profile
+    fields = ['image']
+
+    success_url = reverse_lazy('dashboard:admin:profile-edit')
+    success_message = "تصویر پروفایل با موفقیت به‌روزرسانی شد."
+
+    def get_object(self, queryset=None):
+        return Profile.objects.get(user=self.request.user)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "خطا در به‌روزرسانی تصویر پروفایل.")
+        return redirect(self.success_url)
