@@ -1,4 +1,4 @@
-from django.views.generic import View, TemplateView, UpdateView, ListView, DetailView, DeleteView
+from django.views.generic import View, TemplateView, UpdateView, ListView, DetailView, DeleteView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from dashboard.permissions import HasAdminAccessPermission
 from django.contrib.auth import views as auth_views
@@ -40,9 +40,27 @@ class AdminProductListView(LoginRequiredMixin, HasAdminAccessPermission, ListVie
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['total_items'] = self.get_queryset().count()
-        context['categories'] = ProductCategoryModel.objects.all()
+        queryset = self.get_queryset()
+
+        context['total_items'] = queryset.count()
+        context['categories'] = ProductCategoryModel.objects.filter(
+            productmodel__in=queryset).distinct()
+
         return context
+
+
+class AdminProductCreateView(LoginRequiredMixin, HasAdminAccessPermission, SuccessMessageMixin, CreateView):
+    template_name = 'dashboard/admin/products/product-create.html'
+    queryset = ProductModel.objects.all()
+    form_class = ProductForm
+    success_message = "محصول با موفقیت ایجاد شد."
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('dashboard:admin:product-list')
 
 
 class AdminProductUpdateView(LoginRequiredMixin, HasAdminAccessPermission, SuccessMessageMixin, UpdateView):

@@ -20,7 +20,7 @@
     <div class="card-header border-bottom">
         <div class="d-flex justify-content-between align-items-center">
             <h5 class="">لیست محصولات</h5>
-            <a class="btn btn-primary" href="#">ایجاد محصول</a>
+            <a class="btn btn-primary" href="{% url 'dashboard:admin:product-create' %}">ایجاد محصول</a>
         </div>
     </div>
     <!-- End Header -->
@@ -29,7 +29,7 @@
     <div class="card-body">
 
         <div class="container pb-5">
-            <form action='.' class="row">
+            <form action="." class="row">
 
                 <!-- Input Card -->
                 <div class="col-md-3 py-1">

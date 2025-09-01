@@ -121,7 +121,7 @@
             <!-- End Header -->
 
             <!-- Body -->
-            <form action="#" method="post" enctype="multipart/form-data">
+            <form action="#}" method="post" enctype="multipart/form-data">
 
                 {% csrf_token %}
                 <div class="card-body">
@@ -187,8 +187,11 @@
 {% endblock %}
 
 {% block extra_js_no_compress %}
+<!-- Load CKEditor 5 Classic LTS version -->
 <script src="https://cdn.ckeditor.com/4.25.1/standard/ckeditor.js"></script>
 <script>
+    // Replace 'editor' with the id of your textarea
     CKEDITOR.replace('ckeditor');
 </script>
+
 {% endblock %}
