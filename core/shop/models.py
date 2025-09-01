@@ -57,6 +57,9 @@ class ProductModel(models.Model):
             return f"{self.get_price()} تومان <span class='text-muted text-decoration-line-through'>{self.price} تومان</span>"
         return f"{self.get_price()} تومان"
 
+    def is_published(self):
+        return self.status == ProductStatusType.publish.value
+
 
 class ProductImageModel(models.Model):
     product = models.ForeignKey(ProductModel, on_delete=models.CASCADE)

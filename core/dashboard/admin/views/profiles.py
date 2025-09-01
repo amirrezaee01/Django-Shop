@@ -10,14 +10,14 @@ from django.shortcuts import redirect
 from django.contrib import messages
 
 
-class AdminSecurityEditView(LoginRequiredMixin, SuccessMessageMixin, HasAdminAccessPermison, auth_views.PasswordChangeView):
+class AdminSecurityEditView(LoginRequiredMixin, SuccessMessageMixin, HasAdminAccessPermission, auth_views.PasswordChangeView):
     template_name = 'dashboard/admin/profile/security-edit.html'
     form_class = AdminPasswordChangeForm
     success_url = reverse_lazy('dashboard:admin:security-edit')
     success_message = "رمز عبور با موفقیت تغییر کرد."
 
 
-class AdminProfileEditView(LoginRequiredMixin, HasAdminAccessPermison, SuccessMessageMixin, UpdateView):
+class AdminProfileEditView(LoginRequiredMixin, HasAdminAccessPermission, SuccessMessageMixin, UpdateView):
     template_name = 'dashboard/admin/profile/profile-edit.html'
     form_class = AdminProfileEditForm  # Assuming you have a form for profile editing
     success_url = reverse_lazy('dashboard:admin:profile-edit')
@@ -28,7 +28,7 @@ class AdminProfileEditView(LoginRequiredMixin, HasAdminAccessPermison, SuccessMe
         return Profile.objects.get(user=self.request.user)
 
 
-class AdminProfileImageEditView(LoginRequiredMixin, HasAdminAccessPermison, SuccessMessageMixin, UpdateView):
+class AdminProfileImageEditView(LoginRequiredMixin, HasAdminAccessPermission, SuccessMessageMixin, UpdateView):
     http_method_names = ['post']
     model = Profile
     fields = ['image']
