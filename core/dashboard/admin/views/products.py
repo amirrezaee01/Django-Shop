@@ -49,6 +49,7 @@ class AdminProductUpdateView(LoginRequiredMixin, HasAdminAccessPermission, Succe
     template_name = 'dashboard/admin/products/product-edit.html'
     queryset = ProductModel.objects.all()
     form_class = ProductForm
+    success_message = "محصول با موفقیت ویرایش شد."
 
     def get_success_url(self):
         return reverse_lazy('dashboard:admin:product-edit', kwargs={'pk': self.get_object().pk})
