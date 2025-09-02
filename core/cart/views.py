@@ -19,6 +19,9 @@ class SessionAddProductView(View):
             # uses your new additive method
             success, info = cart.add_quantity(product_id, quantity)
 
+        if request.user.is_authenticated:
+            cart.merge_session_cart_in_db(request.user)
+
         return JsonResponse({
             "success": success,
             "code": info.get("code"),
@@ -37,6 +40,9 @@ class SessionUpdateProductQuantityView(View):
         success = False
         if product_id and quantity:
             success = cart.update_product_quantity(product_id, quantity)
+        if request.user.is_authenticated:
+            cart.merge_session_cart_in_db(request.user)
+
         return JsonResponse({
             'cart': cart.get_cart_dict(),
             'total_quantity': cart.get_total_quantity(),
@@ -51,6 +57,8 @@ class SessionRemoveProductView(View):
         success = False
         if product_id:
             success = cart.remove_product(product_id)
+        if request.user.is_authenticated:
+            cart.merge_session_cart_in_db(request.user)
         return JsonResponse({
             'cart': cart.get_cart_dict(),
             'total_quantity': cart.get_total_quantity(),
