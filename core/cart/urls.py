@@ -10,7 +10,7 @@ urlpatterns = [
          name='session-remove-product'),
     path('session/update-product-quantity/', SessionUpdateProductQuantityView.as_view(),
          name='session-update-product-quantity'),
-    path('session/cart/summary/', SessionCartSummaryView.as_view(),
-         name='session-cart-summary'),
+    path('summary/', CartSummaryView.as_view(),
+         name='cart-summary'),
 
 ]

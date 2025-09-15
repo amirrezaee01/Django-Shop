@@ -66,7 +66,7 @@ class SessionRemoveProductView(View):
         })
 
 
-class SessionCartSummaryView(TemplateView):
+class CartSummaryView(TemplateView):
     template_name = 'cart/cart_summary.html'
 
     def get_context_data(self, **kwargs):
