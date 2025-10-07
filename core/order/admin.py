@@ -24,6 +24,15 @@ class OrderItemModelAdmin(admin.ModelAdmin):
         'price',
         'created_date',
     )
+    search_fields = (
+        'order__user__email',  # works because email is text
+        'product__title',      # text field
+    )
+    list_filter = (
+        'order__user__email',  # filter by email
+       
+
+    )
 
 
 @admin.register(CouponModel)
@@ -34,7 +43,7 @@ class CouponModelAdmin(admin.ModelAdmin):
         'discount_percent',
         'max_limit_usage',
         'used_by_count',
-        'expiry_date',
+        'expiration_date',
         'created_date',
     )
 

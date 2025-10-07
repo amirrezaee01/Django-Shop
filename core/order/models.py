@@ -31,9 +31,12 @@ class CouponModel(models.Model):
     used_by = models.ManyToManyField(
         'accounts.User', related_name='coupon_users', blank=True)
 
-    expiry_date = models.DateTimeField(null=True, blank=True)
+    expiration_date = models.DateTimeField(null=True, blank=True)
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return self.code
 
 
 class OrderModel(models.Model):
@@ -53,6 +56,12 @@ class OrderModel(models.Model):
         choices=OrderStatusType.choices, default=OrderStatusType.pending.value)
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
+    
+    def calculate_total_price(self):
+        return sum(item.price * item.quantity for item in self.order_items.all())
+    
+    def __str__(self):
+        return f"{self.user.email} - {self.id}"
 
 
 class OrderItemModel(models.Model):
