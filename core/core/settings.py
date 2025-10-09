@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'cart',
     'dashboard',
     'order',
+    'payment',
 ]
 
 MIDDLEWARE = [
@@ -176,6 +177,15 @@ if SHOW_DEBUGGER_TOOLBAR:
     INTERNAL_IPS = [
         ip[: ip.rfind(".")] + ".1" for ip in ips] + ["127.0.0.1", "10.0.2.2"]
 
+
+# accounts model settings
 AUTH_USER_MODEL = 'accounts.User'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+
+
+# payment gateway settings
+MERCHANT_ID = config("MERCHANT_ID",default="4ced0a1e-4ad8-4309-9668-3ea3ae8e8897")
+SANDBOX_MODE = config("SANDBOX_MODE", cast=bool, default=True)
+
+
