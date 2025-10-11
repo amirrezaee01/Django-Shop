@@ -1,11 +1,13 @@
-from django.shortcuts import render
-from .models import ProductModel, ProductStatusType, ProductCategoryModel
 from django.views.generic import (
     TemplateView,
     ListView,
     DetailView,
+    View
 )
+from .models import ProductModel, ProductStatusType, ProductCategoryModel, WishlistProductModel
 from django.core.exceptions import FieldError
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import JsonResponse
 # Create your views here.
 
 
@@ -36,17 +38,63 @@ class ShopProductGridView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['total_items'] = self.get_queryset().count()
+
+        # ✅ Count only once instead of calling get_queryset() again
+        context['total_items'] = context['page_obj'].paginator.count
+
+        # ✅ Only query wishlist if user is authenticated
+        if self.request.user.is_authenticated:
+            context['wishlist_items'] = list(
+                WishlistProductModel.objects.filter(
+                    user=self.request.user
+                ).values_list('product_id', flat=True)
+            )
+        else:
+            context['wishlist_items'] = []  # ✅ Empty list for guest users
+
+        # ✅ Prevent duplicate categories using distinct()
         context['categories'] = ProductCategoryModel.objects.filter(
-            productmodel__status=ProductStatusType.publish.value).distinct()
+            productmodel__status=ProductStatusType.publish.value
+        ).distinct()
+
         return context
 
 
 class ShopProductDetailView(DetailView):
     template_name = 'shop/product_detail.html'
     queryset = ProductModel.objects.filter(
-        status=ProductStatusType.publish.value)
+        status=ProductStatusType.publish.value
+    )
     context_object_name = 'product'
     
-    
-   
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        product = self.get_object()
+
+        # ✅ Prevent unnecessary DB query for anonymous users
+        if self.request.user.is_authenticated:
+            context['is_wished'] = WishlistProductModel.objects.filter(
+                user=self.request.user,
+                product=product  # ✅ Better than filtering by ID
+            ).exists()
+        else:
+            context['is_wished'] = False  # or None if you want
+
+        return context
+class AddOrRemoveWishlistView(LoginRequiredMixin, View):
+
+    def post(self, request, *args, **kwargs):
+        product_id = request.POST.get("product_id")
+        message = ""
+        if product_id:
+            try:
+                wishlist_item = WishlistProductModel.objects.get(
+                    user=request.user, product__id=product_id)
+                wishlist_item.delete()
+                message = "محصول از لیست علایق حذف شد"
+            except WishlistProductModel.DoesNotExist:
+                WishlistProductModel.objects.create(
+                    user=request.user, product_id=product_id)
+                message = "محصول به لیست علایق اضافه شد"
+
+        return JsonResponse({"message": message})
