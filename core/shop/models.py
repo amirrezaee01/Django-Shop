@@ -24,21 +24,23 @@ class ProductModel(models.Model):
     title = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255, unique=True, allow_unicode=True)
     image = models.ImageField(
-        default='/default/product-image.png', upload_to="product/img/")
+        default="/default/product-image.png", upload_to="product/img/"
+    )
     description = models.TextField()
     brief_description = models.TextField(blank=True, null=True)
     stock = models.IntegerField(default=0)
     price = models.DecimalField(default=0, max_digits=10, decimal_places=0)
     discount_percent = models.IntegerField(default=0)
     status = models.IntegerField(
-        choices=ProductStatusType.choices, default=ProductStatusType.draft.value)
+        choices=ProductStatusType.choices, default=ProductStatusType.draft.value
+    )
 
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
 
     class Meta:
 
-        ordering = ['-created_date']
+        ordering = ["-created_date"]
 
     def __str__(self):
         return self.title
@@ -70,8 +72,8 @@ class ProductImageModel(models.Model):
 
 
 class WishlistProductModel(models.Model):
-    user = models.ForeignKey("accounts.User",on_delete=models.PROTECT)
-    product = models.ForeignKey(ProductModel,on_delete=models.CASCADE)
-    
+    user = models.ForeignKey("accounts.User", on_delete=models.PROTECT)
+    product = models.ForeignKey(ProductModel, on_delete=models.CASCADE)
+
     def __str__(self):
         return self.product.title

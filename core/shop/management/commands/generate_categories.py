@@ -5,15 +5,16 @@ from shop.models import ProductCategoryModel
 
 
 class Command(BaseCommand):
-    help = 'Generate fake Persian product categories'
+    help = "Generate fake Persian product categories"
 
     def add_arguments(self, parser):
-        parser.add_argument('--count', type=int, default=10,
-                            help='Number of categories to create')
+        parser.add_argument(
+            "--count", type=int, default=10, help="Number of categories to create"
+        )
 
     def handle(self, *args, **options):
-        fake = Faker(locale='fa_IR')
-        count = options['count']
+        fake = Faker(locale="fa_IR")
+        count = options["count"]
         created_count = 0
 
         for _ in range(count):
@@ -29,5 +30,6 @@ class Command(BaseCommand):
             ProductCategoryModel.objects.create(title=title, slug=slug)
             created_count += 1
 
-        self.stdout.write(self.style.SUCCESS(
-            f'Successfully created {created_count} categories.'))
+        self.stdout.write(
+            self.style.SUCCESS(f"Successfully created {created_count} categories.")
+        )

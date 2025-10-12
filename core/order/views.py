@@ -1,9 +1,5 @@
 from django.http import HttpResponse
-from django.views.generic import (
-    TemplateView,
-    FormView,
-    View
-)
+from django.views.generic import TemplateView, FormView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from order.permissions import HasCustomerAccessPermission
 from order.models import UserAddressModel
@@ -17,6 +13,7 @@ from order.models import CouponModel
 from django.http import JsonResponse
 from django.utils import timezone
 from django.shortcuts import redirect
+
 # Create your views here.
 from payment.zarinpal_client import ZarinPalSandbox
 from payment.models import PaymentModel
@@ -25,18 +22,18 @@ from payment.models import PaymentModel
 class OrderCheckOutView(LoginRequiredMixin, HasCustomerAccessPermission, FormView):
     template_name = "order/checkout.html"
     form_class = CheckOutForm
-    success_url = reverse_lazy('order:completed')
+    success_url = reverse_lazy("order:completed")
 
     def get_form_kwargs(self):
         kwargs = super(OrderCheckOutView, self).get_form_kwargs()
-        kwargs['request'] = self.request
+        kwargs["request"] = self.request
         return kwargs
 
     def form_valid(self, form):
         user = self.request.user
         cleaned_data = form.cleaned_data
-        address = cleaned_data['address_id']
-        coupon = cleaned_data['coupon']
+        address = cleaned_data["address_id"]
+        coupon = cleaned_data["coupon"]
 
         cart = CartModel.objects.get(user=user)
         order = self.create_order(address)
@@ -100,17 +97,17 @@ class OrderCheckOutView(LoginRequiredMixin, HasCustomerAccessPermission, FormVie
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         cart = CartModel.objects.get(user=self.request.user)
-        context["addresses"] = UserAddressModel.objects.filter(
-            user=self.request.user)
+        context["addresses"] = UserAddressModel.objects.filter(user=self.request.user)
         total_price = cart.calculate_total_price()
         context["total_price"] = total_price
-        context["total_tax"] = round((total_price * 9)/100)
+        context["total_tax"] = round((total_price * 9) / 100)
         return context
 
 
 class OrderCompletedView(LoginRequiredMixin, HasCustomerAccessPermission, TemplateView):
     template_name = "order/completed.html"
-    
+
+
 class OrderFailedView(LoginRequiredMixin, HasCustomerAccessPermission, TemplateView):
     template_name = "order/failed.html"
 
@@ -145,6 +142,10 @@ class ValidateCouponView(LoginRequiredMixin, HasCustomerAccessPermission, View):
 
                 total_price = cart.calculate_total_price()
                 total_price = round(
-                    total_price - (total_price * (coupon.discount_percent/100)))
-                total_tax = round((total_price * 9)/100)
-        return JsonResponse({"message": message, "total_tax": total_tax, "total_price": total_price}, status=status_code)
+                    total_price - (total_price * (coupon.discount_percent / 100))
+                )
+                total_tax = round((total_price * 9) / 100)
+        return JsonResponse(
+            {"message": message, "total_tax": total_tax, "total_price": total_price},
+            status=status_code,
+        )

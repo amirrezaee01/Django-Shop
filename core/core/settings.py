@@ -22,82 +22,81 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config(
-    'SECRET_KEY',
-    default='django-insecure-+69uxg8(5x6i366diblj8_fdc*dx(gm63)ab(1u+8c6)m2o&uk'
+    "SECRET_KEY",
+    default="django-insecure-+69uxg8(5x6i366diblj8_fdc*dx(gm63)ab(1u+8c6)m2o&uk",
 )
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=True, cast=bool)
+DEBUG = config("DEBUG", default=True, cast=bool)
 
 ALLOWED_HOSTS = config(
-    'ALLOWED_HOSTS',
-    default='*',
-    cast=lambda v: [item.strip() for item in v.split(',')])
+    "ALLOWED_HOSTS", default="*", cast=lambda v: [item.strip() for item in v.split(",")]
+)
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'website',
-    'accounts',
-    'shop',
-    'cart',
-    'dashboard',
-    'order',
-    'payment',
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "website",
+    "accounts",
+    "shop",
+    "cart",
+    "dashboard",
+    "order",
+    "payment",
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = 'core.urls'
+ROOT_URLCONF = "core.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [BASE_DIR / "templates"],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
                 # Add your cart context processor here
-                'cart.context_processors.cart_processor',
+                "cart.context_processors.cart_processor",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'core.wsgi.application'
+WSGI_APPLICATION = "core.wsgi.application"
 
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('PGDB_NAME', default='postgres'),
-        'USER': config('PGDB_NAME', default='postgres'),
-        'PASSWORD': config('PGDB_PASSWORD', default='postgres'),
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": config("PGDB_NAME", default="postgres"),
+        "USER": config("PGDB_NAME", default="postgres"),
+        "PASSWORD": config("PGDB_PASSWORD", default="postgres"),
         # or your DB container/service name
-        'HOST': config('PGDB_HOST', default='db'),
+        "HOST": config("PGDB_HOST", default="db"),
         # default PostgreSQL port
-        'PORT': config('PGDB_PORT', default='5432', cast=int),
+        "PORT": config("PGDB_PORT", default="5432", cast=int),
     }
 }
 
@@ -106,16 +105,16 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
@@ -123,9 +122,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = config('TIME_ZONE', default='UTC')
+TIME_ZONE = config("TIME_ZONE", default="UTC")
 
 USE_I18N = True
 
@@ -135,34 +134,34 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
-MEDIA_URL = 'media/'
+STATIC_URL = "static/"
+MEDIA_URL = "media/"
 
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-MEDIA_ROOT = BASE_DIR / 'media'
+STATIC_ROOT = BASE_DIR / "staticfiles"
+MEDIA_ROOT = BASE_DIR / "media"
 
 STATICFILES_DIRS = [
-    BASE_DIR / 'static',
+    BASE_DIR / "static",
 ]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 # or your email provider
-EMAIL_HOST = config('EMAIL_HOST', default='smtp4dev')
-EMAIL_PORT = config('EMAIL_PORT', cast=int, default=25)
-EMAIL_USE_TLS = config('EMAIL_USE_TLS', cast=bool, default=False)
-EMAIL_USE_SSL = config('EMAIL_USE_SSL', cast=bool, default=False)
-EMAIL_HOST_USER = config('EMAIL_HOST_USER', default="")  # your email address
+EMAIL_HOST = config("EMAIL_HOST", default="smtp4dev")
+EMAIL_PORT = config("EMAIL_PORT", cast=int, default=25)
+EMAIL_USE_TLS = config("EMAIL_USE_TLS", cast=bool, default=False)
+EMAIL_USE_SSL = config("EMAIL_USE_SSL", cast=bool, default=False)
+EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")  # your email address
 EMAIL_HOST_PASSWORD = config(
-    'EMAIL_HOST_PASSWORD', default="")  # your email app password
+    "EMAIL_HOST_PASSWORD", default=""
+)  # your email app password
 
-SHOW_DEBUGGER_TOOLBAR = config(
-    "SHOW_DEBUGGER_TOOLBAR", cast=bool, default=True)
+SHOW_DEBUGGER_TOOLBAR = config("SHOW_DEBUGGER_TOOLBAR", cast=bool, default=True)
 
 # django debug toolbar for docker usage
 if SHOW_DEBUGGER_TOOLBAR:
@@ -173,19 +172,20 @@ if SHOW_DEBUGGER_TOOLBAR:
         "debug_toolbar.middleware.DebugToolbarMiddleware",
     ]
     import socket  # only if you haven't already imported this
+
     hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
-    INTERNAL_IPS = [
-        ip[: ip.rfind(".")] + ".1" for ip in ips] + ["127.0.0.1", "10.0.2.2"]
+    INTERNAL_IPS = [ip[: ip.rfind(".")] + ".1" for ip in ips] + [
+        "127.0.0.1",
+        "10.0.2.2",
+    ]
 
 
 # accounts model settings
-AUTH_USER_MODEL = 'accounts.User'
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
+AUTH_USER_MODEL = "accounts.User"
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/"
 
 
 # payment gateway settings
-MERCHANT_ID = config("MERCHANT_ID",default="4ced0a1e-4ad8-4309-9668-3ea3ae8e8897")
+MERCHANT_ID = config("MERCHANT_ID", default="4ced0a1e-4ad8-4309-9668-3ea3ae8e8897")
 SANDBOX_MODE = config("SANDBOX_MODE", cast=bool, default=True)
-
-

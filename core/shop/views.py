@@ -1,35 +1,35 @@
-from django.views.generic import (
-    TemplateView,
-    ListView,
-    DetailView,
-    View
+from django.views.generic import TemplateView, ListView, DetailView, View
+from .models import (
+    ProductModel,
+    ProductStatusType,
+    ProductCategoryModel,
+    WishlistProductModel,
 )
-from .models import ProductModel, ProductStatusType, ProductCategoryModel, WishlistProductModel
 from django.core.exceptions import FieldError
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
+
 # Create your views here.
 
 
 class ShopProductGridView(ListView):
-    template_name = 'shop/product_grid.html'
+    template_name = "shop/product_grid.html"
     paginate_by = 9
 
     def get_paginate_by(self, queryset):
-        return self.request.GET.get('page_size', self.paginate_by)
+        return self.request.GET.get("page_size", self.paginate_by)
 
     def get_queryset(self):
-        queryset = ProductModel.objects.filter(
-            status=ProductStatusType.publish.value)
-        if search_q := self.request.GET.get('q'):
+        queryset = ProductModel.objects.filter(status=ProductStatusType.publish.value)
+        if search_q := self.request.GET.get("q"):
             queryset = queryset.filter(title__icontains=search_q)
-        if category_id := self.request.GET.get('category_id'):
+        if category_id := self.request.GET.get("category_id"):
             queryset = queryset.filter(category__id=category_id)
-        if min_price := self.request.GET.get('min_price'):
+        if min_price := self.request.GET.get("min_price"):
             queryset = queryset.filter(price__gte=min_price)
-        if max_price := self.request.GET.get('max_price'):
+        if max_price := self.request.GET.get("max_price"):
             queryset = queryset.filter(price__lte=max_price)
-        if order_by := self.request.GET.get('order_by'):
+        if order_by := self.request.GET.get("order_by"):
             try:
                 queryset = queryset.order_by(order_by)
             except FieldError:
@@ -40,20 +40,20 @@ class ShopProductGridView(ListView):
         context = super().get_context_data(**kwargs)
 
         # ✅ Count only once instead of calling get_queryset() again
-        context['total_items'] = context['page_obj'].paginator.count
+        context["total_items"] = context["page_obj"].paginator.count
 
         # ✅ Only query wishlist if user is authenticated
         if self.request.user.is_authenticated:
-            context['wishlist_items'] = list(
-                WishlistProductModel.objects.filter(
-                    user=self.request.user
-                ).values_list('product_id', flat=True)
+            context["wishlist_items"] = list(
+                WishlistProductModel.objects.filter(user=self.request.user).values_list(
+                    "product_id", flat=True
+                )
             )
         else:
-            context['wishlist_items'] = []  # ✅ Empty list for guest users
+            context["wishlist_items"] = []  # ✅ Empty list for guest users
 
         # ✅ Prevent duplicate categories using distinct()
-        context['categories'] = ProductCategoryModel.objects.filter(
+        context["categories"] = ProductCategoryModel.objects.filter(
             productmodel__status=ProductStatusType.publish.value
         ).distinct()
 
@@ -61,26 +61,26 @@ class ShopProductGridView(ListView):
 
 
 class ShopProductDetailView(DetailView):
-    template_name = 'shop/product_detail.html'
-    queryset = ProductModel.objects.filter(
-        status=ProductStatusType.publish.value
-    )
-    context_object_name = 'product'
-    
+    template_name = "shop/product_detail.html"
+    queryset = ProductModel.objects.filter(status=ProductStatusType.publish.value)
+    context_object_name = "product"
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         product = self.get_object()
 
         # ✅ Prevent unnecessary DB query for anonymous users
         if self.request.user.is_authenticated:
-            context['is_wished'] = WishlistProductModel.objects.filter(
+            context["is_wished"] = WishlistProductModel.objects.filter(
                 user=self.request.user,
-                product=product  # ✅ Better than filtering by ID
+                product=product,  # ✅ Better than filtering by ID
             ).exists()
         else:
-            context['is_wished'] = False  # or None if you want
+            context["is_wished"] = False  # or None if you want
 
         return context
+
+
 class AddOrRemoveWishlistView(LoginRequiredMixin, View):
 
     def post(self, request, *args, **kwargs):
@@ -89,12 +89,14 @@ class AddOrRemoveWishlistView(LoginRequiredMixin, View):
         if product_id:
             try:
                 wishlist_item = WishlistProductModel.objects.get(
-                    user=request.user, product__id=product_id)
+                    user=request.user, product__id=product_id
+                )
                 wishlist_item.delete()
                 message = "محصول از لیست علایق حذف شد"
             except WishlistProductModel.DoesNotExist:
                 WishlistProductModel.objects.create(
-                    user=request.user, product_id=product_id)
+                    user=request.user, product_id=product_id
+                )
                 message = "محصول به لیست علایق اضافه شد"
 
         return JsonResponse({"message": message})

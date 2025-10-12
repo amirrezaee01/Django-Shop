@@ -10,17 +10,24 @@ from django.shortcuts import redirect
 from django.contrib import messages
 
 
-class AdminSecurityEditView(LoginRequiredMixin, SuccessMessageMixin, HasAdminAccessPermission, auth_views.PasswordChangeView):
-    template_name = 'dashboard/admin/profile/security-edit.html'
+class AdminSecurityEditView(
+    LoginRequiredMixin,
+    SuccessMessageMixin,
+    HasAdminAccessPermission,
+    auth_views.PasswordChangeView,
+):
+    template_name = "dashboard/admin/profile/security-edit.html"
     form_class = AdminPasswordChangeForm
-    success_url = reverse_lazy('dashboard:admin:security-edit')
+    success_url = reverse_lazy("dashboard:admin:security-edit")
     success_message = "رمز عبور با موفقیت تغییر کرد."
 
 
-class AdminProfileEditView(LoginRequiredMixin, HasAdminAccessPermission, SuccessMessageMixin, UpdateView):
-    template_name = 'dashboard/admin/profile/profile-edit.html'
+class AdminProfileEditView(
+    LoginRequiredMixin, HasAdminAccessPermission, SuccessMessageMixin, UpdateView
+):
+    template_name = "dashboard/admin/profile/profile-edit.html"
     form_class = AdminProfileEditForm  # Assuming you have a form for profile editing
-    success_url = reverse_lazy('dashboard:admin:profile-edit')
+    success_url = reverse_lazy("dashboard:admin:profile-edit")
     success_message = "پروفایل با موفقیت به‌روزرسانی شد."
 
     def get_object(self, queryset=None):
@@ -28,12 +35,14 @@ class AdminProfileEditView(LoginRequiredMixin, HasAdminAccessPermission, Success
         return Profile.objects.get(user=self.request.user)
 
 
-class AdminProfileImageEditView(LoginRequiredMixin, HasAdminAccessPermission, SuccessMessageMixin, UpdateView):
-    http_method_names = ['post']
+class AdminProfileImageEditView(
+    LoginRequiredMixin, HasAdminAccessPermission, SuccessMessageMixin, UpdateView
+):
+    http_method_names = ["post"]
     model = Profile
-    fields = ['image']
+    fields = ["image"]
 
-    success_url = reverse_lazy('dashboard:admin:profile-edit')
+    success_url = reverse_lazy("dashboard:admin:profile-edit")
     success_message = "تصویر پروفایل با موفقیت به‌روزرسانی شد."
 
     def get_object(self, queryset=None):

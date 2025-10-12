@@ -5,11 +5,11 @@ from django import forms
 
 class AdminPasswordChangeForm(PasswordChangeForm):
     error_messages = {
-        'password_incorrect': "رمز عبور فعلی شما نادرست است.",
-        'password_mismatch': "رمزهای عبور جدید مطابقت ندارند.",
-        'password_too_similar': "رمز عبور جدید نباید مشابه رمز عبور فعلی باشد.",
-        'password_too_short': "رمز عبور جدید باید حداقل 8 کاراکتر باشد.",
-        'password_entirely_numeric': "رمز عبور جدید نباید فقط شامل اعداد باشد.",
+        "password_incorrect": "رمز عبور فعلی شما نادرست است.",
+        "password_mismatch": "رمزهای عبور جدید مطابقت ندارند.",
+        "password_too_similar": "رمز عبور جدید نباید مشابه رمز عبور فعلی باشد.",
+        "password_too_short": "رمز عبور جدید باید حداقل 8 کاراکتر باشد.",
+        "password_entirely_numeric": "رمز عبور جدید نباید فقط شامل اعداد باشد.",
     }
 
     def __init__(self, user=None, *args, **kwargs):
@@ -22,29 +22,33 @@ class AdminPasswordChangeForm(PasswordChangeForm):
         }
 
         for field_name, placeholder in field_placeholders.items():
-            self.fields[field_name].widget.attrs.update({
-                "placeholder": placeholder,
-                "class": "form-control",  # Bootstrap styling
-                "autocomplete": "off",    # optional: avoid browser autofill
-            })
+            self.fields[field_name].widget.attrs.update(
+                {
+                    "placeholder": placeholder,
+                    "class": "form-control",  # Bootstrap styling
+                    "autocomplete": "off",  # optional: avoid browser autofill
+                }
+            )
 
 
 class AdminProfileEditForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['first_name', 'last_name', 'phone_number']
+        fields = ["first_name", "last_name", "phone_number"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         field_placeholders = {
-            'first_name': 'نام',
-            'last_name': 'نام خانوادگی',
-            'phone_number': 'شماره تلفن',
+            "first_name": "نام",
+            "last_name": "نام خانوادگی",
+            "phone_number": "شماره تلفن",
         }
 
         for field_name, placeholder in field_placeholders.items():
-            self.fields[field_name].widget.attrs.update({
-                'placeholder': placeholder,
-                'class': 'form-control',
-            })
+            self.fields[field_name].widget.attrs.update(
+                {
+                    "placeholder": placeholder,
+                    "class": "form-control",
+                }
+            )

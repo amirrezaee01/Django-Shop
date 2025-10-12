@@ -1,2 +1,2 @@
-from . profiles import *
-from . products import *
+from .profiles import *
+from .products import *

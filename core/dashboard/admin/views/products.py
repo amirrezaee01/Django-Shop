@@ -1,4 +1,12 @@
-from django.views.generic import View, TemplateView, UpdateView, ListView, DetailView, DeleteView, CreateView
+from django.views.generic import (
+    View,
+    TemplateView,
+    UpdateView,
+    ListView,
+    DetailView,
+    DeleteView,
+    CreateView,
+)
 from django.contrib.auth.mixins import LoginRequiredMixin
 from dashboard.permissions import HasAdminAccessPermission
 from django.contrib.auth import views as auth_views
@@ -15,23 +23,23 @@ from shop.models import *
 
 
 class AdminProductListView(LoginRequiredMixin, HasAdminAccessPermission, ListView):
-    template_name = 'dashboard/admin/products/products-list.html'
+    template_name = "dashboard/admin/products/products-list.html"
     paginate_by = 10
 
     def get_paginate_by(self, queryset):
-        return self.request.GET.get('page_size', self.paginate_by)
+        return self.request.GET.get("page_size", self.paginate_by)
 
     def get_queryset(self):
         queryset = ProductModel.objects.all()
-        if search_q := self.request.GET.get('q'):
+        if search_q := self.request.GET.get("q"):
             queryset = queryset.filter(title__icontains=search_q)
-        if category_id := self.request.GET.get('category_id'):
+        if category_id := self.request.GET.get("category_id"):
             queryset = queryset.filter(category__id=category_id)
-        if min_price := self.request.GET.get('min_price'):
+        if min_price := self.request.GET.get("min_price"):
             queryset = queryset.filter(price__gte=min_price)
-        if max_price := self.request.GET.get('max_price'):
+        if max_price := self.request.GET.get("max_price"):
             queryset = queryset.filter(price__lte=max_price)
-        if order_by := self.request.GET.get('order_by'):
+        if order_by := self.request.GET.get("order_by"):
             try:
                 queryset = queryset.order_by(order_by)
             except FieldError:
@@ -42,15 +50,18 @@ class AdminProductListView(LoginRequiredMixin, HasAdminAccessPermission, ListVie
         context = super().get_context_data(**kwargs)
         queryset = self.get_queryset()
 
-        context['total_items'] = queryset.count()
-        context['categories'] = ProductCategoryModel.objects.filter(
-            productmodel__in=queryset).distinct()
+        context["total_items"] = queryset.count()
+        context["categories"] = ProductCategoryModel.objects.filter(
+            productmodel__in=queryset
+        ).distinct()
 
         return context
 
 
-class AdminProductCreateView(LoginRequiredMixin, HasAdminAccessPermission, SuccessMessageMixin, CreateView):
-    template_name = 'dashboard/admin/products/product-create.html'
+class AdminProductCreateView(
+    LoginRequiredMixin, HasAdminAccessPermission, SuccessMessageMixin, CreateView
+):
+    template_name = "dashboard/admin/products/product-create.html"
     queryset = ProductModel.objects.all()
     form_class = ProductForm
     success_message = "محصول با موفقیت ایجاد شد."
@@ -60,21 +71,27 @@ class AdminProductCreateView(LoginRequiredMixin, HasAdminAccessPermission, Succe
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse_lazy('dashboard:admin:product-list')
+        return reverse_lazy("dashboard:admin:product-list")
 
 
-class AdminProductUpdateView(LoginRequiredMixin, HasAdminAccessPermission, SuccessMessageMixin, UpdateView):
-    template_name = 'dashboard/admin/products/product-edit.html'
+class AdminProductUpdateView(
+    LoginRequiredMixin, HasAdminAccessPermission, SuccessMessageMixin, UpdateView
+):
+    template_name = "dashboard/admin/products/product-edit.html"
     queryset = ProductModel.objects.all()
     form_class = ProductForm
     success_message = "محصول با موفقیت ویرایش شد."
 
     def get_success_url(self):
-        return reverse_lazy('dashboard:admin:product-edit', kwargs={'pk': self.get_object().pk})
+        return reverse_lazy(
+            "dashboard:admin:product-edit", kwargs={"pk": self.get_object().pk}
+        )
 
 
-class AdminProductDeleteView(LoginRequiredMixin, HasAdminAccessPermission, SuccessMessageMixin, DeleteView):
-    template_name = 'dashboard/admin/products/product-delete.html'
+class AdminProductDeleteView(
+    LoginRequiredMixin, HasAdminAccessPermission, SuccessMessageMixin, DeleteView
+):
+    template_name = "dashboard/admin/products/product-delete.html"
     queryset = ProductModel.objects.all()
-    success_url = reverse_lazy('dashboard:admin:product-list')
+    success_url = reverse_lazy("dashboard:admin:product-list")
     success_message = "محصول با موفقیت حذف شد."
