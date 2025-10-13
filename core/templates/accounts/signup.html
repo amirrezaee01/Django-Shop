@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container content-space-3 content-space-t-lg-4 content-space-b-lg-3">
+    <div class="flex-grow-1 mx-auto" style="max-width: 28rem;">
+        
+        <!-- Heading -->
+        <div class="text-center mb-5 mb-md-7">
+            <h1 class="h2 fw-bold">فرم ثبت نام</h1>
+            <p class="text-muted">برای ایجاد حساب کاربری، فرم زیر را تکمیل کنید.</p>
+        </div>
+        <!-- End Heading -->
+
+        <!-- Card Wrapper for Clean UI -->
+        <div class="card shadow-sm border-0 rounded-3 p-4">
+            <form method="POST" action="{% url 'accounts:signup' %}">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+
+                <!-- Email -->
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">ایمیل</label>
+                    <input 
+                        type="email" 
+                        name="email" 
+                        value="{{ form.email.value }}" 
+                        class="form-control form-control-lg text-center" 
+                        placeholder="email@site.com" 
+                        required
+                    >
+                    {% for err in form.email.errors %}
+                        <div class="text-danger small mt-2">{{ err }}</div>
+                    {% endfor %}
+                </div>
+
+                <!-- Password -->
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">کلمه عبور</label>
+                    <div class="input-group input-group-merge">
+                        <input 
+                            type="password" 
+                            name="password" 
+                            class="form-control form-control-lg text-center js-toggle-password-input" 
+                            placeholder="حداقل 8 کاراکتر" 
+                            required
+                        >
+                        <button class="input-group-text js-toggle-password border-0 bg-light" type="button">
+                            <i class="bi-eye"></i>
+                        </button>
+                    </div>
+                    {% for err in form.password.errors %}
+                        <div class="text-danger small mt-2">{{ err }}</div>
+                    {% endfor %}
+                </div>
+
+                <!-- Confirm Password -->
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">تکرار کلمه عبور</label>
+                    <div class="input-group input-group-merge">
+                        <input 
+                            type="password" 
+                            name="confirm_password" 
+                            class="form-control form-control-lg text-center js-toggle-password-input" 
+                            placeholder="دوباره وارد کنید" 
+                            required
+                        >
+                        <button class="input-group-text js-toggle-password border-0 bg-light" type="button">
+                            <i class="bi-eye"></i>
+                        </button>
+                    </div>
+                    {% for err in form.confirm_password.errors %}
+                        <div class="text-danger small mt-2">{{ err }}</div>
+                    {% endfor %}
+                </div>
+
+                <!-- Submit -->
+                <div class="d-grid mb-3">
+                    <button type="submit" class="btn btn-primary btn-lg rounded-pill fw-bold">
+                        ثبت نام
+                    </button>
+                </div>
+
+                <!-- Link to login -->
+                <div class="text-center">
+                    <p class="text-muted">حساب کاربری دارید؟ <a class="link fw-semibold" href="{% url 'accounts:login' %}">وارد شوید</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+<script>
+    // Toggle Password Visibility
+    document.querySelectorAll('.js-toggle-password').forEach(toggle => {
+        toggle.addEventListener('click', function () {
+            let input = this.parentElement.querySelector('.js-toggle-password-input');
+            let icon = this.querySelector('i');
+
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.replace("bi-eye", "bi-eye-slash");
+            } else {
+                input.type = "password";
+                icon.classList.replace("bi-eye-slash", "bi-eye");
+            }
+        });
+    });
+</script>
+{% endblock %}
