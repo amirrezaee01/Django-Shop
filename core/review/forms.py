@@ -1,20 +1,24 @@
 from django import forms
 from .models import ReviewModel
-from shop.models import *
+from shop.models import ProductModel,ProductStatusType
 
 class SubmitReviewForm(forms.ModelForm):
     class Meta:
         model = ReviewModel
-        fields = ['product','rate','description']
-
+        fields = ['product','rate', 'description']
+        error_messages = {
+            'description': {
+                'required': 'فیلد توضیحات اجباری است',
+            },
+        }
     def clean(self):
         cleaned_data = super().clean()
-        prodcut = cleaned_data.get("product")
-        
+        product = cleaned_data.get('product')
+
+        # Check if the product exists and is published
         try:
-            ProductModel.objects.get(id=prodcut.id,status=ProductStatusType.publish.value)
-            
+            ProductModel.objects.get(id=product.id,status=ProductStatusType.publish.value)
         except ProductModel.DoesNotExist:
-            raise forms.ValidationError("This product is not available")
-        
-        return cleaned_data 
+            raise forms.ValidationError("این محصول وجود ندارد")
+
+        return cleaned_data

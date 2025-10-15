@@ -1,14 +1,15 @@
-from django.views.generic import TemplateView, ListView, DetailView, View
-from .models import (
-    ProductModel,
-    ProductStatusType,
-    ProductCategoryModel,
-    WishlistProductModel,
+from django.views.generic import (
+    TemplateView,
+    ListView,
+    DetailView,
+    View
 )
+from .models import ProductModel, ProductStatusType, ProductCategoryModel, WishlistProductModel
 from django.core.exceptions import FieldError
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
-
+from review.models import ReviewModel,ReviewStatusType
+# Create your views here.
 # Create your views here.
 
 
@@ -61,24 +62,34 @@ class ShopProductGridView(ListView):
 
 
 class ShopProductDetailView(DetailView):
-    template_name = "shop/product_detail.html"
-    queryset = ProductModel.objects.filter(status=ProductStatusType.publish.value)
-    context_object_name = "product"
+    template_name = "shop/product-detail.html"
+    queryset = ProductModel.objects.filter(
+        status=ProductStatusType.publish.value)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         product = self.get_object()
-
-        # ✅ Prevent unnecessary DB query for anonymous users
-        if self.request.user.is_authenticated:
-            context["is_wished"] = WishlistProductModel.objects.filter(
-                user=self.request.user,
-                product=product,  # ✅ Better than filtering by ID
-            ).exists()
+        context["is_wished"] = WishlistProductModel.objects.filter(
+            user=self.request.user, product__id=product.id).exists() if self.request.user.is_authenticated else False
+        reviews = ReviewModel.objects.filter(product=product,status=ReviewStatusType.accepted.value)
+        context["reviews"] = reviews
+        total_reviews_count =reviews.count()
+        context["reviews_count"] = {
+            f"rate_{rate}": reviews.filter(rate=rate).count() for rate in range(1, 6)
+        }
+        if total_reviews_count != 0:
+            context["reviews_avg"] = {
+                f"rate_{rate}": round((reviews.filter(rate=rate).count()/total_reviews_count)*100,2) for rate in range(1, 6)
+            }
         else:
-            context["is_wished"] = False  # or None if you want
-
+            context["reviews_avg"] = {f"rate_{rate}": 0 for rate in range(1, 6)}
         return context
+
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset)
+        obj.product_images.prefetch_related()
+        return obj
+
 
 
 class AddOrRemoveWishlistView(LoginRequiredMixin, View):
