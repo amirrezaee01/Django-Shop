@@ -35,6 +35,7 @@ class ProductModel(models.Model):
         choices=ProductStatusType.choices, default=ProductStatusType.draft.value
     )
 
+    avg = models.FloatField(default=0.0)
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
 
