@@ -133,9 +133,9 @@
                 <div class="js-quantity-counter row align-items-center">
                     <div class="col">
                         <span class="d-block small">تعداد را انتخاب کنید</span>
-                        <input id="quantity-input" class="js-result form-control form-control-quantity-counter"
-                            type="number" min="0" max="{{ product.stock }}" value="0">
+                        <input class="js-result form-control form-control-quantity-counter" type="text" value="1">
                     </div>
+                    <!-- End Col -->
 
                     <div class="col-auto">
                         <a class="js-minus btn btn-outline-secondary btn-xs btn-icon rounded-circle"
@@ -154,11 +154,10 @@
                             </svg>
                         </a>
                     </div>
+                    <!-- End Col -->
                 </div>
+                <!-- End Row -->
             </div>
-
-
-
             <!-- End Quantity -->
 
             <!-- Accordion -->
@@ -236,11 +235,8 @@
             <!-- End Accordion -->
 
             <div class="d-grid mb-4">
-                <button type="button" class="btn btn-primary btntransition"
-                    onclick="addToCart('{{ object.id }}')">افزودن به سبد خرید</button>
+                <button type="button" class="btn btn-primary btntransition">افزودن به سبد خرید</button>
             </div>
-            <div id="cart-message" class="alert" style="display:none;"></div>
-
 
             <!-- Media -->
             <div class="d-flex align-items-center">
@@ -278,9 +274,8 @@
     <!-- End Row -->
 </div>
 <!-- End Content -->
-{% show_similar_products product %}
 
-
+{% show_similar_products object %}
 
 <!-- Review Section -->
 <div id="reviewSection" class="container content-space-b-2 content-space-b-lg-3">
@@ -433,7 +428,6 @@
         </div>
         <!-- End Col -->
 
-
         <div class="col-md-8">
             <div class="ps-md-4">
                 <!-- Heading -->
@@ -556,7 +550,7 @@
             </div>
 
             <div class="modal-body">
-                <form id="review-form" action="{% url 'review:submit-review' %}" method="post">
+                <form action="{% url 'review:submit-review' %}" method="post" id="review-form">
                     {% csrf_token %}
                     <input hidden name="product" value="{{object.id}}">
                     <div class="row">
