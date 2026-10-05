@@ -22,6 +22,15 @@ class CartSession:
                 "current_quantity": 0,
                 "stock": 0,
             }
+        try:
+            product_id = str(int(product_id))
+        except (TypeError, ValueError):
+            return False, {
+                "code": "invalid_product",
+                "message": "شناسه محصول نامعتبر است.",
+                "current_quantity": 0,
+                "stock": 0,
+            }
         if add_qty < 1:
             return False, {
                 "code": "invalid_quantity",
@@ -93,15 +102,16 @@ class CartSession:
     # -------------------------
     def update_product_quantity(self, product_id, quantity):
         """Set product quantity directly (used in cart summary)."""
+        try:
+            product_id = str(int(product_id))
+            quantity = int(quantity)
+        except (TypeError, ValueError):
+            return False
+
         product = ProductModel.objects.filter(
             id=product_id, status=ProductStatusType.publish.value
         ).first()
-        if not product:
-            return False
-
-        try:
-            quantity = int(quantity)
-        except (TypeError, ValueError):
+        if not product or product.stock < 1:
             return False
 
         # Clamp quantity between 1 and stock

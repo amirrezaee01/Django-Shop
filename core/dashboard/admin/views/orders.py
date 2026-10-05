@@ -13,7 +13,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
 from django.shortcuts import redirect
 from django.contrib import messages
-from django.core.exceptions import FieldError
+from core.query_utils import apply_ordering, bounded_page_size, filter_partial_id
 from order.models import OrderModel, OrderStatusType
 
 
@@ -22,24 +22,25 @@ class AdminOrderListView(LoginRequiredMixin, HasAdminAccessPermission, ListView)
     paginate_by = 10
 
     def get_paginate_by(self, queryset):
-        return self.request.GET.get("page_size", self.paginate_by)
+        return bounded_page_size(self.request, self.paginate_by)
 
     def get_queryset(self):
-        queryset = OrderModel.objects.all()
+        queryset = OrderModel.objects.select_related("user", "payment", "coupon")
         if search_q := self.request.GET.get("q"):
-            queryset = queryset.filter(id__icontains=search_q)
+            queryset = filter_partial_id(queryset, search_q)
         if status := self.request.GET.get("status"):
-            queryset = queryset.filter(status=status)
-        if order_by := self.request.GET.get("order_by"):
             try:
-                queryset = queryset.order_by(order_by)
-            except FieldError:
-                pass
+                queryset = queryset.filter(status=int(status))
+            except ValueError:
+                return queryset.none()
+        queryset = apply_ordering(
+            queryset, self.request.GET.get("order_by"), {"id", "created_date", "total_price", "status"}
+        )
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["total_items"] = self.get_queryset().count()
+        context["total_items"] = context["page_obj"].paginator.count
         context["status_types"] = OrderStatusType.choices
         return context
 

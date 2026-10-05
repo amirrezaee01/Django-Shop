@@ -16,7 +16,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
 from django.shortcuts import redirect
 from django.contrib import messages
-from django.core.exceptions import FieldError
+from core.query_utils import apply_ordering, bounded_page_size
 from shop.models import WishlistProductModel
 
 
@@ -27,22 +27,19 @@ class CustomerWishlistListView(
     paginate_by = 5
 
     def get_paginate_by(self, queryset):
-        return self.request.GET.get("page_size", self.paginate_by)
+        return bounded_page_size(self.request, self.paginate_by)
 
     def get_queryset(self):
-        queryset = WishlistProductModel.objects.filter(user=self.request.user)
+        queryset = WishlistProductModel.objects.filter(user=self.request.user).select_related("product")
         if search_q := self.request.GET.get("q"):
             queryset = queryset.filter(product__title__icontains=search_q)
-        if order_by := self.request.GET.get("order_by"):
-            try:
-                queryset = queryset.order_by(order_by)
-            except FieldError:
-                pass
-        return queryset
+        return apply_ordering(
+            queryset, self.request.GET.get("order_by"), {"created_date", "product__title", "product__price"}
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["total_items"] = self.get_queryset().count()
+        context["total_items"] = context["page_obj"].paginator.count
         return context
 
 

@@ -68,10 +68,8 @@ class OrderModel(models.Model):
     def get_price(self):
 
         if self.coupon:
-            return round(
-                self.total_price
-                - (self.total_price * Decimal(self.coupon.discount_percent / 100))
-            )
+            discount_rate = Decimal(self.coupon.discount_percent) / Decimal("100")
+            return round(self.total_price * (Decimal("1") - discount_rate))
         else:
             return self.total_price
 

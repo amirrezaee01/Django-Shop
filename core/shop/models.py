@@ -49,6 +49,11 @@ class ProductModel(models.Model):
     def is_discounted(self):
         return self.discount_percent > 0
 
+    @property
+    def avg_rate(self):
+        """Compatibility name used by the existing storefront templates."""
+        return self.avg
+
     def get_price(self):
         if self.is_discounted():
             discount = self.price * self.discount_percent / 100
@@ -78,6 +83,11 @@ class ProductImageModel(models.Model):
 class WishlistProductModel(models.Model):
     user = models.ForeignKey("accounts.User", on_delete=models.PROTECT)
     product = models.ForeignKey(ProductModel, on_delete=models.CASCADE)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["user", "product"], name="unique_wishlist_product_per_user")
+        ]
 
     def __str__(self):
         return self.product.title

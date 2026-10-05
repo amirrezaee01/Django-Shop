@@ -6,16 +6,21 @@ from order.models import UserAddressModel
 from order.forms import CheckOutForm
 from cart.models import CartModel, CartItemModel
 from order.models import OrderModel, OrderItemModel
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from cart.cart import CartSession
 from decimal import Decimal
 from order.models import CouponModel
 from django.http import JsonResponse
 from django.utils import timezone
 from django.shortcuts import redirect
+from django.db import transaction
 
 # Create your views here.
-from payment.zarinpal_client import ZarinPalSandbox
+from payment.zarinpal_client import (
+    PaymentConfigurationError,
+    PaymentGatewayError,
+    ZarinPalSandbox,
+)
 from payment.models import PaymentModel
 
 
@@ -30,32 +35,45 @@ class OrderCheckOutView(LoginRequiredMixin, HasCustomerAccessPermission, FormVie
         return kwargs
 
     def form_valid(self, form):
+        try:
+            zarinpal = ZarinPalSandbox()
+        except PaymentConfigurationError as exc:
+            form.add_error(None, str(exc))
+            return self.form_invalid(form)
+
         user = self.request.user
         cleaned_data = form.cleaned_data
         address = cleaned_data["address_id"]
         coupon = cleaned_data["coupon"]
 
-        cart = CartModel.objects.get(user=user)
-        order = self.create_order(address)
+        try:
+            with transaction.atomic():
+                cart = CartModel.objects.get(user=user)
+                order = self.create_order(address)
+                self.create_order_items(order, cart)
+                total_price = order.calculate_total_price()
+                self.apply_coupon(coupon, order, user, total_price)
+                order.save()
+                callback_url = self.request.build_absolute_uri(reverse("payment:verify"))
+                payment_url = self.create_payment_url(order, zarinpal, callback_url)
+                cart.cart_items.all().delete()
+        except PaymentGatewayError as exc:
+            form.add_error(None, str(exc))
+            return self.form_invalid(form)
 
-        self.create_order_items(order, cart)
-        self.clear_cart(cart)
+        CartSession(self.request.session).clear()
+        return redirect(payment_url)
 
-        total_price = order.calculate_total_price()
-        self.apply_coupon(coupon, order, user, total_price)
-        order.save()
-        return redirect(self.create_payment_url(order))
-
-    def create_payment_url(self, order):
-        zarinpal = ZarinPalSandbox()
-        response = zarinpal.payment_request(order.get_price())
+    def create_payment_url(self, order, zarinpal, callback_url):
+        response = zarinpal.payment_request(order.get_price(), callback_url=callback_url)
+        authority = response["Authority"]
         payment_obj = PaymentModel.objects.create(
-            authority_id=response.get("Authority"),
+            authority_id=authority,
             amount=order.get_price(),
         )
         order.payment = payment_obj
         order.save()
-        return zarinpal.generate_payment_url(response.get("Authority"))
+        return zarinpal.generate_payment_url(authority)
 
     def create_order(self, address):
         return OrderModel.objects.create(
@@ -67,17 +85,13 @@ class OrderCheckOutView(LoginRequiredMixin, HasCustomerAccessPermission, FormVie
         )
 
     def create_order_items(self, order, cart):
-        for item in cart.cart_items.all():
+        for item in cart.cart_items.select_related("product"):
             OrderItemModel.objects.create(
                 order=order,
                 product=item.product,
                 quantity=item.quantity,
                 price=item.product.get_price(),
             )
-
-    def clear_cart(self, cart):
-        cart.cart_items.all().delete()
-        CartSession(self.request.session).clear()
 
     def apply_coupon(self, coupon, order, user, total_price):
         if coupon:
