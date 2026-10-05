@@ -11,25 +11,27 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
-from decouple import config
+from decouple import AutoConfig
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+config = AutoConfig(search_path=BASE_DIR.parent)
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config(
-    "SECRET_KEY",
-    default="django-insecure-+69uxg8(5x6i366diblj8_fdc*dx(gm63)ab(1u+8c6)m2o&uk",
-)
+DEBUG = config("DEBUG", default=False, cast=bool)
+SECRET_KEY = config("SECRET_KEY", default="local-development-only-key")
+if not DEBUG and (not SECRET_KEY or SECRET_KEY == "local-development-only-key"):
+    raise RuntimeError("Set SECRET_KEY to a strong, private value when DEBUG=False")
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config("DEBUG", default=True, cast=bool)
-
 ALLOWED_HOSTS = config(
-    "ALLOWED_HOSTS", default="*", cast=lambda v: [item.strip() for item in v.split(",")]
+    "ALLOWED_HOSTS", default="localhost,127.0.0.1", cast=lambda v: [item.strip() for item in v.split(",") if item.strip()]
+)
+CSRF_TRUSTED_ORIGINS = config(
+    "CSRF_TRUSTED_ORIGINS", default="", cast=lambda v: [item.strip() for item in v.split(",") if item.strip()]
 )
 
 
@@ -49,7 +51,7 @@ INSTALLED_APPS = [
     "dashboard",
     "order",
     "payment",
-    'review',
+    "review",
 ]
 
 MIDDLEWARE = [
@@ -88,18 +90,20 @@ WSGI_APPLICATION = "core.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": config("PGDB_NAME", default="postgres"),
-        "USER": config("PGDB_NAME", default="postgres"),
-        "PASSWORD": config("PGDB_PASSWORD", default="postgres"),
-        # or your DB container/service name
-        "HOST": config("PGDB_HOST", default="db"),
-        # default PostgreSQL port
-        "PORT": config("PGDB_PORT", default="5432", cast=int),
+DB_ENGINE = config("DB_ENGINE", default="django.db.backends.sqlite3")
+if DB_ENGINE == "django.db.backends.sqlite3":
+    DATABASES = {"default": {"ENGINE": DB_ENGINE, "NAME": BASE_DIR / "db.sqlite3"}}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": DB_ENGINE,
+            "NAME": config("PGDB_NAME", default="postgres"),
+            "USER": config("PGDB_USER", default="postgres"),
+            "PASSWORD": config("PGDB_PASSWORD", default=""),
+            "HOST": config("PGDB_HOST", default="localhost"),
+            "PORT": config("PGDB_PORT", default="5432", cast=int),
+        }
     }
-}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -135,8 +139,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = "static/"
-MEDIA_URL = "media/"
+STATIC_URL = "/static/"
+MEDIA_URL = "/media/"
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
 MEDIA_ROOT = BASE_DIR / "media"
@@ -151,18 +155,21 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 #email part
-EMAIL_BACKEND = config("EMAIL_BACKEND")
-EMAIL_HOST = config("EMAIL_HOST")
-EMAIL_PORT = config("EMAIL_PORT", cast=int)
-EMAIL_USE_TLS = config("EMAIL_USE_TLS", cast=bool)
-EMAIL_USE_SSL = config("EMAIL_USE_SSL", cast=bool)
+EMAIL_BACKEND = config("EMAIL_BACKEND", default="django.core.mail.backends.console.EmailBackend" if DEBUG else "django.core.mail.backends.smtp.EmailBackend")
+EMAIL_HOST = config("EMAIL_HOST", default="localhost")
+EMAIL_PORT = config("EMAIL_PORT", default=25, cast=int)
+EMAIL_USE_TLS = config("EMAIL_USE_TLS", default=False, cast=bool)
+EMAIL_USE_SSL = config("EMAIL_USE_SSL", default=False, cast=bool)
 EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
 DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default="no-reply@example.com")
 
+SESSION_COOKIE_SECURE = config("SESSION_COOKIE_SECURE", default=not DEBUG, cast=bool)
+CSRF_COOKIE_SECURE = config("CSRF_COOKIE_SECURE", default=not DEBUG, cast=bool)
 
 
-SHOW_DEBUGGER_TOOLBAR = config("SHOW_DEBUGGER_TOOLBAR", cast=bool, default=True)
+
+SHOW_DEBUGGER_TOOLBAR = config("SHOW_DEBUGGER_TOOLBAR", cast=bool, default=False)
 
 # django debug toolbar for docker usage
 if SHOW_DEBUGGER_TOOLBAR:
@@ -188,5 +195,18 @@ LOGOUT_REDIRECT_URL = "/"
 
 
 # payment gateway settings
-MERCHANT_ID = config("MERCHANT_ID", default="4ced0a1e-4ad8-4309-9668-3ea3ae8e8897")
-SANDBOX_MODE = config("SANDBOX_MODE", cast=bool, default=True)
+MERCHANT_ID = config("MERCHANT_ID", default="")
+PAYMENT_CALLBACK_URL = config("PAYMENT_CALLBACK_URL", default="")
+
+if not DEBUG:
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_SSL_REDIRECT = config("SECURE_SSL_REDIRECT", default=True, cast=bool)
+    TRUST_X_FORWARDED_PROTO = config("TRUST_X_FORWARDED_PROTO", default=False, cast=bool)
+    if TRUST_X_FORWARDED_PROTO:
+        # Only enable this when a trusted TLS proxy overwrites this header.
+        SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    SECURE_HSTS_SECONDS = config("SECURE_HSTS_SECONDS", default=0, cast=int)
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = config("SECURE_HSTS_INCLUDE_SUBDOMAINS", default=False, cast=bool)
+    SECURE_HSTS_PRELOAD = config("SECURE_HSTS_PRELOAD", default=False, cast=bool)
+    SECURE_REFERRER_POLICY = "same-origin"
+    X_FRAME_OPTIONS = "DENY"

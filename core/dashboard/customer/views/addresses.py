@@ -7,7 +7,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
 from django.shortcuts import redirect
 from django.contrib import messages
-from django.core.exceptions import FieldError
+from core.query_utils import apply_ordering
 from order.models import UserAddressModel
 
 
@@ -18,12 +18,11 @@ class CustomerAddressListView(
 
     def get_queryset(self):
         queryset = UserAddressModel.objects.filter(user=self.request.user)
-        if order_by := self.request.GET.get("order_by"):
-            try:
-                queryset = queryset.order_by(order_by)
-            except FieldError:
-                pass
-        return queryset
+        return apply_ordering(
+            queryset,
+            self.request.GET.get("order_by"),
+            {"id", "created_date", "state", "city", "zip_code"},
+        )
 
 
 class CustomerAddressCreateView(

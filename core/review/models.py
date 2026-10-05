@@ -2,7 +2,7 @@ from django.db import models
 from shop.models import ProductModel
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.dispatch import receiver
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 from django.db.models import Avg
 # Create your models here.
 
@@ -39,10 +39,18 @@ class ReviewModel(models.Model):
         }
         
         
-@receiver(post_save,sender=ReviewModel)
-def calculate_avg_review(sender,instance,created,**kwargs):
-    if instance.status == ReviewStatusType.accepted.value:
-        product = instance.product
-        average_rating = ReviewModel.objects.filter(product=product, status=ReviewStatusType.accepted).aggregate(Avg('rate'))['rate__avg']
-        product.avg_rate = round(average_rating,1)
-        product.save()
+def update_product_rating(product_id):
+    average = ReviewModel.objects.filter(
+        product_id=product_id, status=ReviewStatusType.accepted.value
+    ).aggregate(value=Avg("rate"))["value"]
+    ProductModel.objects.filter(pk=product_id).update(avg=round(average, 1) if average is not None else 0)
+
+
+@receiver(post_save, sender=ReviewModel)
+def calculate_avg_review(sender, instance, **kwargs):
+    update_product_rating(instance.product_id)
+
+
+@receiver(post_delete, sender=ReviewModel)
+def recalculate_rating_after_delete(sender, instance, **kwargs):
+    update_product_rating(instance.product_id)

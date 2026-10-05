@@ -8,12 +8,18 @@ class CartModel(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["user"], name="unique_cart_per_user")
+        ]
+
     def __str__(self):
         return self.user.email
 
     def calculate_total_price(self):
         return sum(
-            item.product.get_price() * item.quantity for item in self.cart_items.all()
+            item.product.get_price() * item.quantity
+            for item in self.cart_items.select_related("product")
         )
 
 
@@ -26,6 +32,11 @@ class CartItemModel(models.Model):
 
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["cart", "product"], name="unique_product_per_cart")
+        ]
 
     def __str__(self):
         return f"{self.product.title} - {self.cart.id}"
