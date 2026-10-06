@@ -107,7 +107,10 @@
 
               <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                 <a class="dropdown-item" href="{% url 'dashboard:home' %}">پروفایل</a>
-                <a class="dropdown-item" href="{% url 'accounts:logout' %}">خروج</a>
+                <form action="{% url 'accounts:logout' %}" method="post">
+                  {% csrf_token %}
+                  <button class="dropdown-item" type="submit">خروج</button>
+                </form>
               </div>
 
               {% else %}
@@ -146,7 +149,10 @@
 
           <div class="col-auto">
             <div class="d-none d-lg-block">
-              <a class="btn btn-soft-light btn-sm" href="{% url 'accounts:logout' %}">خروج</a>
+              <form action="{% url 'accounts:logout' %}" method="post" class="d-inline">
+                {% csrf_token %}
+                <button class="btn btn-soft-light btn-sm" type="submit">خروج</button>
+              </form>
             </div>
             <!-- Responsive Toggle Button -->
             <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="collapse"
